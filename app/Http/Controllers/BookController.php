@@ -1,10 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\Book;
-
 use Illuminate\Http\Request;
+use App\Http\Requests\BookStoreRequest;
+use App\Http\Requests\BookUpdateRequest;
+use Illuminate\Support\Facades\Validator;
+
+
 
 class BookController extends Controller
 {
@@ -22,46 +25,25 @@ class BookController extends Controller
 
 
     // create book function----------------------
-    public function createBook(Request $request)
+    public function createBook(BookStoreRequest $request)
     {
-        $books = Book::create([
-            "title" => $request->title,
-            "authorId" => $request->authorId,
-            "isbn" =>$request->isbn,
-            "publicationYear" =>$request->publicationYear,
-            "gener" =>$request->gener,
-            "availableCopies" => $request-> availableCopies
-        ]);
-        if ($books) {
-            return response()->json([
-                'message' => "Book is created successfully"
-            ], 201);
-        }
+        $books = Book::create($request->all([], 200));
         return response()->json([
-            'message' => "Book is failed create!!!"
-        ], 400);
+            "message" => "Success",
+            "data" => $books
+        ]);
     }
 
     // edit book function---------------------------
-     public function editBook(Request $request,int $id){
-        $books = Book::Where('id', $id)
-        -> update([
-            "title" => $request->title,
-            "authorId" => $request->authorId,
-            "isbn" =>$request->isbn,
-            "publicationYear" =>$request->publicationYear,
-            "gener" =>$request->gener,
-            "availableCopies" => $request-> availableCopies
-        ]);
-        if($books){
-            return response()->json([
-                'message' => "Book is created successfully"
-            ], 201);
-        }
-        return response()->json([
-            'message' => "Book is failed create!!!"
-        ], 400);  
-    }
+    public function editBook(BookUpdateRequest $request, int $id)
+{
+    $book = Book::find($id);
+    $book->update($request->validated());
+    return response()->json([
+        'message' => "Success",
+        'data' => $book
+    ], 200);
+}
 
     // delete function ----------------------------------
     public function deleteBook(int $id){
