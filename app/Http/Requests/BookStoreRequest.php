@@ -14,7 +14,8 @@ class BookStoreRequest extends FormRequest
     }
 
 
-    protected function failedValidation(Validator $validator) {
+    protected function failedValidation(Validator $validator)
+    {
         throw new HttpResponseException(response()->json([
             "success" => false,
             "message" => $validator->errors()
@@ -29,11 +30,11 @@ class BookStoreRequest extends FormRequest
     {
         return [
             "title" => "required|string|min:2|max:255",
-            "authorId" => "string|min:1|max:255",
+            "authorId" => "required|integer|exists:authors,id",
             "isbn" => "required|string|min:2|max:255",
-            "publicationYear" => "required|string|min:4|max:4",
-            "gener" => "string|min:2|max:150",
-            "availableCopies" => "required|string|min:1|max:10"
+            "publicationYear" => "required|digits:4",
+            "generation" => "nullable|string|min:2|max:150",
+            "availableCopies" => "required|integer|min:1",
         ];
     }
 }

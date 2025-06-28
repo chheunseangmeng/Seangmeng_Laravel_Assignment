@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // I use prefix and group api ( library )------------------\
-Route::prefix("/library")->group(function() {
+Route::prefix("/library")->group(function () {
     Route::get("/books", [BookController::class, "index"])->name("allBooks");
     Route::get("/books/{id}", [BookController::class, "showBook"]);
     Route::post("/books", [BookController::class, "createBook"]);
@@ -17,17 +17,19 @@ Route::prefix("/library")->group(function() {
 // ---------------------------------------------------
 
 // I use prefix and group api ( author )------------------\
-Route::prefix("/author")->group(function() {
+Route::prefix("/author")->group(function () {
     Route::get("/authors", [AuthorController::class, "index"])->name("allAuthor");
     Route::get("/authors/{id}", [AuthorController::class, "showAuthor"]);
     Route::post("/authors", [AuthorController::class, "createAuthor"]);
     Route::put("/authors/{id}", [AuthorController::class, "editAuthor"]);
     Route::delete("/authors/{id}", [AuthorController::class, "deleteAuthor"]);
+    Route::get('/{id}/books', [AuthorController::class, 'booksByAuthor']);
+    Route::get('/{id}/name', [AuthorController::class, 'getAuthorName']);
 });
 // ---------------------------------------------------
 
 // I use prefix and group api ( user )------------------\
-Route::prefix("/user")->group(function() {
+Route::prefix("/user")->group(function () {
     Route::get("/users", [UserController::class, "index"])->name("allUsers");
     Route::get("/users/{id}", [UserController::class, "showUser"]);
     Route::post("/users", [UserController::class, "createUser"]);

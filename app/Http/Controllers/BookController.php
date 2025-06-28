@@ -1,75 +1,87 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Book;
-use Illuminate\Http\Request;
 use App\Http\Requests\BookStoreRequest;
 use App\Http\Requests\BookUpdateRequest;
-use Illuminate\Support\Facades\Validator;
-
-
+use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
-
-
-    // Show all books ---------------
+    // Show all books
     public function index()
     {
-        $books = new Book();
+        $books = Book::all();
+
         return response()->json([
-            'message' => 'Book show Successfully',
-            'data' => $books::all(),
+            'message' => 'Books retrieved successfully',
+            'data' => $books,
         ], 200);
     }
 
-
-    // create book function----------------------
+    // Create new book
     public function createBook(BookStoreRequest $request)
     {
-        $books = Book::create($request->all([], 200));
+        $book = Book::create($request->validated());
+
         return response()->json([
-            "message" => "Success",
-            "data" => $books
-        ]);
+            'message' => 'Book created successfully',
+            'data' => $book,
+        ], 201);
     }
 
-    // edit book function---------------------------
-    public function editBook(BookUpdateRequest $request, int $id)
-{
-    $book = Book::find($id);
-    $book->update($request->validated());
-    return response()->json([
-        'message' => "Success",
-        'data' => $book
-    ], 200);
-}
+    // Show one book by ID
+    public function showBook($id)
+    {
+        $book = Book::find($id);
 
-    // delete function ----------------------------------
-    public function deleteBook(int $id){
-        $books = Book::where('id', $id)->delete();
-         if($books){
+        if (!$book) {
             return response()->json([
-                'message' => "Book deleted"
-            ], 201);
+                'message' => 'Book not found',
+            ], 404);
         }
+
         return response()->json([
-            'message' => "Book failed to delete"
-        ], 400);  
+            'message' => 'Book retrieved successfully',
+            'data' => $book,
+        ], 200);
     }
 
-    // show by id ---------------------------------------
-    public function showBook(int $id) {
-        $books = Book::Where('id', $id)->get();
-           if($books){
+    // Update book
+    public function editBook(BookUpdateRequest $request, $id)
+    {
+        $book = Book::find($id);
+
+        if (!$book) {
             return response()->json([
-                'message' => "Book show successfully",
-                'data' => $books,
-            ], 201);
+                'message' => 'Book not found',
+            ], 404);
         }
+
+        $book->update($request->validated());
+
         return response()->json([
-            'message' => "failed to show" . $id . "not found"
-        ], 400);  
+            'message' => 'Book updated successfully',
+            'data' => $book,
+        ], 200);
     }
-   
+
+    // Delete book
+    public function deleteBook($id)
+    {
+        $book = Book::find($id);
+
+        if (!$book) {
+            return response()->json([
+                'message' => 'Book not found',
+            ], 404);
+        }
+
+        $book->delete();
+
+        return response()->json([
+            'message' => 'Book deleted successfully',
+        ], 200);
+    }
 }
